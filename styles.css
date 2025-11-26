@@ -224,8 +224,8 @@ h1 {
 
     #floppy-canvas {
         max-width: 100%;
-        height: auto;
-        max-height: fit-content;
+        height: fit-content;
+        max-height: 75%;
     }
 
     .score-container div {
