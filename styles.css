@@ -175,6 +175,28 @@ h1 {
     text-align: center;
 }
 
+.credit {
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #c8f5d0;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    letter-spacing: 1px;
+    z-index: 6;
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+.credit a {
+    color: #5ee270;
+    text-decoration: none;
+}
+
+.credit a:hover {
+    text-decoration: underline;
+}
+
 @media (max-width: 520px) {
     h1 {
         font-size: 3em;
