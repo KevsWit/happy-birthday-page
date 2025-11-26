@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+<title>Happy Birthday Baby</title>
+</head>
+<body>
+<h1>Happy Birthday</br>Romi Chan</h1>
+<div class="image-container">
+    <img src="./assets/Romi.jpeg" alt="Romi Goddes">
+</div>
+<canvas id="birthday"></canvas>
+<button id="gaming-toggle" class="gaming-button">Gaming!</button>
+<section id="gaming-frame" class="gaming-frame">
+  <div class="gaming-frame__header">
+    <span class="gaming-title">Arcade</span>
+    <button id="gaming-close" class="close-button" aria-label="Cerrar juego">X</button>
+  </div>
+  <header class="floppy-header">
+    <h2>Xayah Bird</h2>
+    <div class="score-container">
+      <div id="bestScore">Mejor : 0</div>
+      <div id="currentScore">Actual : 0</div>
+    </div>
+  </header>
+  <canvas id="floppy-canvas" width="431" height="768"></canvas>
+  <p class="gaming-hint">Haz click dentro del juego para volar</p>
+</section>
+<script src="scripts.js"></script>
+<link rel="stylesheet" href="styles.css">
+</body>
+</html>

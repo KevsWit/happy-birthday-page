@@ -1,168 +1,218 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 body {
-  margin: 0;
-  background: #020202;
-  cursor: crosshair;
+    margin: 0;
+    background: #020202;
+    cursor: crosshair;
 }
-canvas{display:block}
+
+canvas {
+    display: block
+}
+
 h1 {
-  position: fixed;
-  top: 20%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #fff;
-  font-family: "Source Sans Pro";
-  font-size: 5em;
-  font-weight: 900;
-  -webkit-user-select: none;
-  user-select: none;
-  text-align: center;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-family: "Source Sans Pro";
+    font-size: 5em;
+    font-weight: 900;
+    -webkit-user-select: none;
+    user-select: none;
+    text-align: center;
 }
+
 .image-container {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: clamp(140px, 30vw, 220px);
-  z-index: 4;
-  text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(140px, 30vw, 220px);
+    z-index: 4;
+    text-align: center;
 }
+
 .image-container img {
-  width: 100%;
-  height: auto;
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    width: 100%;
+    height: auto;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
 }
+
 .gaming-button {
-  position: fixed;
-  top: 24px;
-  right: 24px;
-  background: #5ee270;
-  color: #032c0f;
-  border: none;
-  border-radius: 14px;
-  padding: 12px 18px;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 14px;
-  letter-spacing: 1px;
-  box-shadow: 0 10px 25px rgba(94, 226, 112, 0.35);
-  cursor: pointer;
-  z-index: 3;
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    background: #5ee270;
+    color: #032c0f;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 18px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    letter-spacing: 1px;
+    box-shadow: 0 10px 25px rgba(94, 226, 112, 0.35);
+    cursor: pointer;
+    z-index: 3;
 }
+
 .gaming-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 28px rgba(94, 226, 112, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(94, 226, 112, 0.5);
 }
+
 .gaming-frame {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(460px, 95vw);
-  max-height: 90vh;
-  background: rgba(0, 0, 0, 0.85);
-  border: 2px solid #5ee270;
-  border-radius: 18px;
-  padding: 12px;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
-  z-index: 5;
-  backdrop-filter: blur(6px);
-  overflow: hidden;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(460px, 95vw);
+    max-height: 90vh;
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #5ee270;
+    border-radius: 18px;
+    padding: 12px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+    z-index: 5;
+    backdrop-filter: blur(6px);
+    overflow: hidden;
 }
+
 .gaming-frame.open {
-  display: flex;
+    display: flex;
 }
+
 .gaming-frame__header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #5ee270;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 14px;
-  letter-spacing: 1px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #5ee270;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    letter-spacing: 1px;
 }
+
 .gaming-title {
-  text-transform: uppercase;
+    text-transform: uppercase;
 }
+
 .close-button {
-  background: transparent;
-  border: none;
-  color: #5ee270;
-  font-size: 22px;
-  cursor: pointer;
+    background: transparent;
+    border: none;
+    color: #5ee270;
+    font-size: 22px;
+    cursor: pointer;
 }
+
 .close-button:hover {
-  color: #a0f3ae;
+    color: #a0f3ae;
 }
+
 .floppy-header {
-  margin: 0 auto;
-  width: 431px;
-  text-align: center;
-  font-family: 'Press Start 2P', cursive;
+    margin: 0 auto;
+    width: 431px;
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
 }
+
 .floppy-header h2 {
-  background: url("./assets/flappy-bird-set.png") 0% 340px;
-  padding: 1rem 0;
-  margin: 0;
-  color: #032c0f;
+    background: url("./assets/flappy-bird-set.png") 0% 2rem;
+    padding: 1rem 0;
+    margin: 0;
+    color: #032c0f;
 }
+
 .score-container {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 6px;
-  background: #5ee270;
-  font-family: 'Press Start 2P', cursive;
-  width: 100%;
-  box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 6px;
+    background: #5ee270;
+    font-family: 'Press Start 2P', cursive;
+    width: 100%;
+    box-sizing: border-box;
 }
+
 .score-container div {
-  color: #032c0f;
-  font-size: 12px;
+    color: #032c0f;
+    font-size: 12px;
 }
+
 #floppy-canvas {
-  width: 100%;
-  max-width: 431px;
-  height: auto;
-  max-height: calc(90vh - 190px);
-  background: #71c5cf;
-  border-radius: 12px;
+    width: 100%;
+    max-width: 431px;
+    height: auto;
+    max-height: calc(90vh - 190px);
+    background: #71c5cf;
+    border-radius: 12px;
 }
+
 .gaming-hint {
-  font-family: 'Press Start 2P', cursive;
-  color: #c8f5d0;
-  font-size: 10px;
-  margin: 0 0 6px 0;
-  text-align: center;
+    font-family: 'Press Start 2P', cursive;
+    color: #c8f5d0;
+    font-size: 10px;
+    margin: 0 0 6px 0;
+    text-align: center;
 }
 
 @media (max-width: 520px) {
-  h1 {
-    font-size: 3em;
-    top: 14%;
-  }
-  .image-container {
-    top: 50%;
-    width: clamp(500px, 45vw, 200px);
-  }
+    h1 {
+        font-size: 3em;
+        top: 14%;
+    }
 
-  .gaming-frame {
-    top: 52%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: calc(100vw - 20px);
-    max-height: calc(100vh - 24px);
-    padding: 12px;
-  }
+    .gaming-frame__header {
+        font-size: 3rem;
+        width: 100%;
+        height: auto;
+    }
 
-  #floppy-canvas {
-    width: 100%;
-    height: auto;
-    max-height: calc(100vh - 170px);
-  }
+    .close-button {
+        font-size: 3rem;
+    }
+
+    .floppy-header {
+        width: 100%;
+    }
+
+    .floppy-header h2 {
+        background: url(./assets/flappy-bird-set.png) 0% 20rem;
+        font-size: 3rem;
+    }
+
+    #floppy-canvas {
+        max-width: 100%;
+        height: auto;
+        max-height: fit-content;
+    }
+
+    .score-container div {
+        font-size: 1.5rem;
+    }
+
+    .gaming-hint {
+        font-size: 2.5rem;
+    }
+
+    .gaming-button {
+        font-size: 2rem;
+        padding: 16px 24px;
+    }
+
+    .gaming-frame {
+        width: 90%;
+        max-height: 100%;
+        height: 90%;
+    }
+
+    .image-container {
+        top: 50%;
+        width: clamp(500px, 45vw, 200px);
+    }
 }
