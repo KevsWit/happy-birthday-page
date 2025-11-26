@@ -1,6 +1,10 @@
 const PI2 = Math.PI * 2
+const MAX_DPR = 1.5
+const getDpr = () => Math.min(globalThis.devicePixelRatio || 1, MAX_DPR)
+const isMobile = () => globalThis.matchMedia && globalThis.matchMedia('(max-width: 520px)').matches
 const random = (min, max) => Math.trunc(Math.random() * (max - min + 1) + min)
 const timestamp = _ => Date.now()
+let backgroundPaused = false
 
 class Birthday {
   constructor() {
@@ -10,12 +14,19 @@ class Birthday {
   }
   
   resize() {
-    this.width = canvas.width = window.innerWidth
+    const dpr = getDpr()
+    canvas.width = Math.trunc(window.innerWidth * dpr)
+    canvas.height = Math.trunc(window.innerHeight * dpr)
+    canvas.style.width = `${window.innerWidth}px`
+    canvas.style.height = `${window.innerHeight}px`
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+    this.width = canvas.width
     let center = Math.trunc(this.width / 2)
     this.spawnA = Math.trunc(center - center / 4)
     this.spawnB = Math.trunc(center + center / 4)
     
-    this.height = canvas.height = window.innerHeight
+    this.height = canvas.height
     this.spawnC = this.height * .1
     this.spawnD = this.height * .5
     
@@ -159,6 +170,11 @@ document.ontouchstart = evt => birthday.onClick(evt)
 ;(function loop(){
   requestAnimationFrame(loop)
 
+  if (backgroundPaused) {
+    then = timestamp()
+    return
+  }
+
   let now = timestamp()
   let delta = now - then
 
@@ -176,11 +192,11 @@ function initHeartsOverlay() {
   let hearts = [];
   let last = Date.now();
   let spawnBudget = 0;
-  let dpr = globalThis.devicePixelRatio || 1;
+  let dpr = getDpr();
 
   const resizeHeartCanvas = () => {
     const rect = container.getBoundingClientRect();
-    dpr = globalThis.devicePixelRatio || 1;
+    dpr = getDpr();
     heartCanvas.width = rect.width * dpr;
     heartCanvas.height = rect.height * dpr;
     heartCanvas.style.width = `${rect.width}px`;
@@ -221,6 +237,12 @@ function initHeartsOverlay() {
     const now = Date.now();
     const delta = (now - last) / 1000;
     last = now;
+
+    if (backgroundPaused) {
+      heartCtx.clearRect(0, 0, heartCanvas.width, heartCanvas.height);
+      globalThis.requestAnimationFrame(loopHearts);
+      return;
+    }
 
     spawnBudget += delta * 14;
     while (spawnBudget >= 1) {
@@ -412,10 +434,12 @@ function initFloppyBird() {
 
   sprite.onload = () => {
     setupGame();
-    render();
+    globalThis.requestAnimationFrame(render);
   };
 
   const toggleGameFrame = (open) => {
+    isOpen = open;
+    backgroundPaused = isMobile() ? open : false;
     gamingFrame.classList.toggle('open', open);
     gamingFrame.style.display = open ? 'flex' : 'none';
     if (!open) {
