@@ -1,6 +1,6 @@
 const PI2 = Math.PI * 2
-const random = (min, max) => Math.random() * (max - min + 1) + min | 0
-const timestamp = _ => new Date().getTime()
+const random = (min, max) => Math.trunc(Math.random() * (max - min + 1) + min)
+const timestamp = _ => Date.now()
 
 class Birthday {
   constructor() {
@@ -11,9 +11,9 @@ class Birthday {
   
   resize() {
     this.width = canvas.width = window.innerWidth
-    let center = this.width / 2 | 0
-    this.spawnA = center - center / 4 | 0
-    this.spawnB = center + center / 4 | 0
+    let center = Math.trunc(this.width / 2)
+    this.spawnA = Math.trunc(center - center / 4)
+    this.spawnB = Math.trunc(center + center / 4)
     
     this.height = canvas.height = window.innerHeight
     this.spawnC = this.height * .1
@@ -22,8 +22,8 @@ class Birthday {
   }
   
   onClick(evt) {
-     let x = evt.clientX || evt.touches && evt.touches[0].pageX
-     let y = evt.clientY || evt.touches && evt.touches[0].pageY
+     let x = evt.clientX || evt.touches?.[0]?.pageX
+     let y = evt.clientY || evt.touches?.[0]?.pageY
      
      let count = random(3,5)
      for(let i = 0; i < count; i++) this.fireworks.push(new Firework(
@@ -39,33 +39,52 @@ class Birthday {
   }
   
   update(delta) {
+    this.fadeBackground(delta)
+    this.drawFireworks(delta)
+    this.maybeSpawn(delta)
+    this.trimFireworks()
+  }
+
+  fadeBackground(delta) {
     ctx.globalCompositeOperation = 'hard-light'
     ctx.fillStyle = `rgba(20,20,20,${ 7 * delta })`
     ctx.fillRect(0, 0, this.width, this.height)
+  }
 
+  drawFireworks(delta) {
     ctx.globalCompositeOperation = 'lighter'
-    for (let firework of this.fireworks) firework.update(delta)
-
-    this.counter += delta * 3
-    if (this.counter >= 1) {
-      this.fireworks.push(new Firework(
-        random(this.spawnA, this.spawnB),
-        this.height,
-        random(0, this.width),
-        random(this.spawnC, this.spawnD),
-        random(0, 360),
-        random(30, 110)))
-      this.counter = 0
+    for (let firework of this.fireworks) {
+      firework.update(delta)
     }
+  }
 
-    if (this.fireworks.length > 1000) this.fireworks = this.fireworks.filter(firework => !firework.dead)
+  maybeSpawn(delta) {
+    this.counter += delta * 3
+    if (this.counter < 1) return
 
+    this.fireworks.push(new Firework(
+      random(this.spawnA, this.spawnB),
+      this.height,
+      random(0, this.width),
+      random(this.spawnC, this.spawnD),
+      random(0, 360),
+      random(30, 110)))
+    this.counter = 0
+  }
+
+  trimFireworks() {
+    if (this.fireworks.length > 1000) {
+      this.fireworks = this.fireworks.filter(firework => !firework.dead)
+    }
   }
 }
 
 class Firework {
+  dead = false
+  madeChilds = false
+  history = []
+
   constructor(x, y, targetX, targetY, shade, offsprings) {
-    this.dead = false
     this.offsprings = offsprings
 
     this.x = x
@@ -74,7 +93,6 @@ class Firework {
     this.targetY = targetY
 
     this.shade = shade
-    this.history = []
   }
   update(delta) {
     if (this.dead) return
@@ -97,8 +115,8 @@ class Firework {
         
         let babies = this.offsprings / 2
         for (let i = 0; i < babies; i++) {
-          let targetX = this.x + this.offsprings * Math.cos(PI2 * i / babies) | 0
-          let targetY = this.y + this.offsprings * Math.sin(PI2 * i / babies) | 0
+          let targetX = Math.trunc(this.x + this.offsprings * Math.cos(PI2 * i / babies))
+          let targetY = Math.trunc(this.y + this.offsprings * Math.sin(PI2 * i / babies))
 
           birthday.fireworks.push(new Firework(this.x, this.y, targetX, targetY, this.shade, 0))
 
@@ -149,6 +167,95 @@ document.ontouchstart = evt => birthday.onClick(evt)
 
 })()
 
+function initHeartsOverlay() {
+  const container = document.querySelector('.image-container');
+  const heartCanvas = document.getElementById('hearts');
+  if (!container || !heartCanvas) return;
+
+  const heartCtx = heartCanvas.getContext('2d');
+  let hearts = [];
+  let last = Date.now();
+  let spawnBudget = 0;
+  let dpr = globalThis.devicePixelRatio || 1;
+
+  const resizeHeartCanvas = () => {
+    const rect = container.getBoundingClientRect();
+    dpr = globalThis.devicePixelRatio || 1;
+    heartCanvas.width = rect.width * dpr;
+    heartCanvas.height = rect.height * dpr;
+    heartCanvas.style.width = `${rect.width}px`;
+    heartCanvas.style.height = `${rect.height}px`;
+    heartCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+
+  const drawHeart = (heart) => {
+    heartCtx.save();
+    heartCtx.translate(heart.x, heart.y);
+    heartCtx.scale(heart.size, heart.size);
+    heartCtx.rotate(heart.angle);
+    heartCtx.beginPath();
+    heartCtx.moveTo(0, -0.5);
+    heartCtx.bezierCurveTo(0, -0.5, -0.5, -0.9, -1, -0.3);
+    heartCtx.bezierCurveTo(-1, 0.4, 0, 0.9, 0, 1.2);
+    heartCtx.bezierCurveTo(0, 0.9, 1, 0.4, 1, -0.3);
+    heartCtx.bezierCurveTo(0.5, -0.9, 0, -0.5, 0, -0.5);
+    heartCtx.fillStyle = `rgba(255, 105, 180, ${heart.alpha})`;
+    heartCtx.fill();
+    heartCtx.restore();
+  };
+
+  const spawnHeart = () => {
+    hearts.push({
+      x: Math.random() * (heartCanvas.width / dpr),
+      y: (heartCanvas.height / dpr) + 18,
+      size: Math.random() * 8 + 8, // 8px - 16px aprox
+      speed: Math.random() * 40 + 50,
+      drift: Math.random() * 40 - 20,
+      alpha: 1,
+      angle: Math.random() * Math.PI,
+      spin: Math.random() * 1.2 - 0.6
+    });
+  };
+
+  const loopHearts = () => {
+    const now = Date.now();
+    const delta = (now - last) / 1000;
+    last = now;
+
+    spawnBudget += delta * 14;
+    while (spawnBudget >= 1) {
+      spawnHeart();
+      spawnBudget -= 1;
+    }
+
+    heartCtx.clearRect(0, 0, heartCanvas.width, heartCanvas.height);
+
+    hearts = hearts.filter((heart) => heart.alpha > 0 && heart.y + heart.size > -10);
+    for (const heart of hearts) {
+      heart.y -= heart.speed * delta;
+      heart.x += heart.drift * delta;
+      heart.alpha -= delta * 0.25;
+      heart.angle += heart.spin * delta;
+      drawHeart(heart);
+    }
+
+    globalThis.requestAnimationFrame(loopHearts);
+  };
+
+  const img = container.querySelector('img');
+  if (img && !img.complete) {
+    img.addEventListener('load', resizeHeartCanvas);
+  } else {
+    resizeHeartCanvas();
+  }
+  globalThis.addEventListener('resize', resizeHeartCanvas);
+  new ResizeObserver(resizeHeartCanvas).observe(container);
+  resizeHeartCanvas();
+  globalThis.requestAnimationFrame(() => resizeHeartCanvas());
+  for (let i = 0; i < 10; i++) spawnHeart();
+  loopHearts();
+}
+
 function initFloppyBird() {
   const gamingButton = document.getElementById('gaming-toggle');
   const gamingFrame = document.getElementById('gaming-frame');
@@ -190,7 +297,7 @@ function initFloppyBird() {
     currentScore = 0;
     flight = jump;
     flyHeight = (floppyCanvas.height / 2) - (size[1] / 2);
-    pipes = Array(3).fill().map((_, i) => [floppyCanvas.width + (i * (pipeGap + pipeWidth)), pipeLoc()]);
+    pipes = new Array(3).fill(null).map((_, i) => [floppyCanvas.width + (i * (pipeGap + pipeWidth)), pipeLoc()]);
     setScores();
   };
 
@@ -221,7 +328,7 @@ function initFloppyBird() {
     );
 
     if (gamePlaying) {
-      pipes.forEach((pipe) => {
+      for (const pipe of pipes) {
         pipe[0] -= speed;
 
         floppyCtx.drawImage(
@@ -250,7 +357,8 @@ function initFloppyBird() {
         if (pipe[0] <= -pipeWidth) {
           currentScore += 1;
           bestScore = Math.max(bestScore, currentScore);
-          pipes = [...pipes.slice(1), [pipes[pipes.length - 1][0] + pipeGap + pipeWidth, pipeLoc()]];
+          const lastX = pipes.at(-1)[0];
+          pipes = [...pipes.slice(1), [lastX + pipeGap + pipeWidth, pipeLoc()]];
         }
 
         const hitPipe = [
@@ -263,7 +371,7 @@ function initFloppyBird() {
           gamePlaying = false;
           setupGame();
         }
-      });
+      }
     }
 
     if (gamePlaying) {
@@ -299,7 +407,7 @@ function initFloppyBird() {
     }
 
     setScores();
-    window.requestAnimationFrame(render);
+    globalThis.requestAnimationFrame(render);
   };
 
   sprite.onload = () => {
@@ -342,3 +450,4 @@ function initFloppyBird() {
 }
 
 initFloppyBird();
+globalThis.addEventListener('load', initHeartsOverlay);

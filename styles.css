@@ -32,6 +32,9 @@ h1 {
     width: clamp(140px, 30vw, 220px);
     z-index: 4;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .image-container img {
@@ -39,6 +42,17 @@ h1 {
     height: auto;
     border-radius: 14px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    position: relative;
+    z-index: 1;
+}
+
+.image-container canvas#hearts {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
 }
 
 .gaming-button {
@@ -123,7 +137,7 @@ h1 {
 }
 
 .floppy-header h2 {
-    background: url("./assets/flappy-bird-set.png") 0% 2rem;
+    background: url("./assets/flappy-bird-set.png") 0% 64rem;
     padding: 1rem 0;
     margin: 0;
     color: #032c0f;
