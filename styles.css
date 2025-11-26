@@ -225,7 +225,7 @@ h1 {
     #floppy-canvas {
         max-width: 100%;
         height: fit-content;
-        max-height: 75%;
+        max-height: 90%;
     }
 
     .score-container div {
@@ -233,7 +233,7 @@ h1 {
     }
 
     .gaming-hint {
-        font-size: 2.5rem;
+        font-size: 2rem;
     }
 
     .gaming-button {
